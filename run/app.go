@@ -2,21 +2,22 @@ package run
 
 import (
 	"context"
-	"github.com/gin-gonic/gin"
-	"gitlab.com/ptflp/geotask/cache"
-	"gitlab.com/ptflp/geotask/geo"
-	cservice "gitlab.com/ptflp/geotask/module/courier/service"
-	cstorage "gitlab.com/ptflp/geotask/module/courier/storage"
-	"gitlab.com/ptflp/geotask/module/courierfacade/controller"
-	cfservice "gitlab.com/ptflp/geotask/module/courierfacade/service"
-	oservice "gitlab.com/ptflp/geotask/module/order/service"
-	ostorage "gitlab.com/ptflp/geotask/module/order/storage"
-	"gitlab.com/ptflp/geotask/router"
-	"gitlab.com/ptflp/geotask/server"
-	"gitlab.com/ptflp/geotask/workers/order"
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/ea9898/geotask/geo"
+	"github.com/ea9898/geotask/geo/cache"
+	cservice "github.com/ea9898/geotask/module/courier/service"
+	cstorage "github.com/ea9898/geotask/module/courier/storage"
+	"github.com/ea9898/geotask/module/courierfacade/controller"
+	cfservice "github.com/ea9898/geotask/module/courierfacade/service"
+	oservice "github.com/ea9898/geotask/module/order/service"
+	ostorage "github.com/ea9898/geotask/module/order/storage"
+	"github.com/ea9898/geotask/router"
+	"github.com/ea9898/geotask/server"
+	"github.com/ea9898/geotask/workers/order"
+	"github.com/gin-gonic/gin"
 )
 
 type App struct {
@@ -35,11 +36,11 @@ func (a *App) Run() error {
 	rclient := cache.NewRedisClient(host, port)
 
 	// инициализация контекста с таймаутом
-	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
+	_, cancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
 	defer cancel()
 
 	// проверка доступности redis
-	_, err := rclient.Ping(ctx).Result()
+	_, err := rclient.Ping().Result()
 	if err != nil {
 		return err
 	}
